@@ -1,0 +1,33 @@
+1) What are the considerations when designing software architecture for a ledger service? 
+
+	* Main consideration would be thread safety. Multiple applications would try to access and update the ledger 
+    at the same time depending on transaction volume JVM might get exhuasted, hence thread safety would be critical. If this is a standalone application
+    I would make use of java synchronized keyword, or if the application is running on an Application Server will do the necessary 
+    configurations in the application server via providing adequate thread pools, thread wait times.
+	
+	* If the Ledger records are stored in a database then all the database related precautions should be considered. 
+    For example rollbacks, fail overs.
+	
+	* Another important consideration would be logging. From the moment the ledger message flows into the system 
+    the developer should ensure at different layers message inward and message outward is be properly logged with compliance 
+    to the bank compliance policies. For example card no, account no masking, encrypting of important details like usernames/passwords. 
+	
+	* Final aspect I would consider would be security. How the ledger service can be secured, using a TLS version if accessing over 
+    HTTP, any records which needs to be encrypted by a standard mechanism.
+
+2) What are the endpoints you need to build to enable the use cases for customers who are reviewing their transactions in a banking app?
+
+	* An endpoint to filter transactions based on time frames.
+		eg: Customer transactions for the past month, past three months etc. But there would be an architectural consideration to 
+    what extent the customer ledger detail should be retained (transactions for an year, 5 years etc)
+	
+	* The endpoint should be flexible enough to filter transaction based on application type. Example core banking system, 
+    Internet banking system, or any other third party application. 
+	
+	* An authentication endpoint. This may be a token based endpoint like oAuth2.
+	
+	* If the customer is a multi currency, user transactions should be available able to filter by currency types, account types. 
+	
+	* If possible if the bank has adequate financing, try to expose the endpoints via an ESB/ API manager. Since a 
+    banking app might require different message formats, might need to continuously	cater fast changing requirements, having an 
+    ESB/API manager would be a good option to expose the services. Also this would help the endpoints to be monetized and throttled. 
